@@ -1,10 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
-from .models import User, Vehicle
+from .models import Purchase, User, Vehicle
 from .schemas import AuthResponse, RegisterResponse, RestockRequest, UserLogin, UserRead, UserRegister, VehicleCreate, VehicleList, VehicleRead, VehicleUpdate
 from .security import admin_user, create_token, current_user, hash_password, verify_password
 
@@ -23,8 +22,8 @@ def health_check():
 def register(data: UserRegister, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == data.email.lower()).first():
         raise HTTPException(status_code=409, detail="An account with this email already exists")
-    role = "admin" if data.role == "admin" else "user"
-    user = User(name=data.name, email=data.email.lower(), password_hash=hash_password(data.password), role=role)
+    # Administrators are provisioned only through the trusted bootstrap command.
+    user = User(name=data.name, email=data.email.lower(), password_hash=hash_password(data.password), role="user")
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -81,11 +80,12 @@ def delete_vehicle(vehicle_id: int, _: User = Depends(admin_user), db: Session =
 
 
 @app.post("/api/vehicles/{vehicle_id}/purchase", response_model=VehicleRead)
-def purchase_vehicle(vehicle_id: int, _: User = Depends(current_user), db: Session = Depends(get_db)):
+def purchase_vehicle(vehicle_id: int, user: User = Depends(current_user), db: Session = Depends(get_db)):
     vehicle = db.get(Vehicle, vehicle_id)
     if not vehicle: raise HTTPException(status_code=404, detail="Vehicle not found")
     if vehicle.quantity < 1: raise HTTPException(status_code=409, detail="Vehicle is out of stock")
     vehicle.quantity -= 1
+    db.add(Purchase(user_id=user.id, vehicle_id=vehicle.id, quantity=1))
     db.commit(); db.refresh(vehicle)
     return vehicle
 

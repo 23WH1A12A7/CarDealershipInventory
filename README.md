@@ -35,6 +35,15 @@ uvicorn app.main:app --reload --port 8000
 
 The API documentation is available at `http://localhost:8000/docs`.
 
+Seed the curated demo inventory and provision the first admin account from trusted local commands:
+
+```powershell
+python -m app.seed
+python -m app.bootstrap_admin
+```
+
+Public registration always creates a standard user. This avoids a user elevating their own access in production.
+
 ### Frontend
 
 ```powershell
@@ -45,7 +54,7 @@ npm run dev
 
 Visit `http://localhost:5173`.
 
-For PostgreSQL, start the provided local container with `docker compose up -d`, install a PostgreSQL driver such as `psycopg`, then set `DATABASE_URL` to `postgresql+psycopg://apex:change-me-before-deploying@localhost:5432/apex_motors`.
+For PostgreSQL, start the provided local container with `docker compose up -d`, then set `DATABASE_URL` to `postgresql+psycopg://apex:change-me-before-deploying@localhost:5432/apex_motors`. The required driver and Alembic migration tooling are included in `requirements.txt`. Run `alembic upgrade head` from `backend` before production startup.
 
 ## Test report
 
@@ -54,7 +63,7 @@ cd backend
 python -m pytest
 ```
 
-The initial test suite covers registration and login, invalid credentials, protected vehicle creation and search, purchase stock decrementation, and zero-stock rejection.
+The suite covers registration/login, duplicate accounts, public role escalation prevention, authorization, vehicle CRUD, search filters, restocking, purchasing, and zero-stock rejection. Frontend tests validate disabled purchases and administrator controls.
 
 ## TDD approach
 
@@ -72,4 +81,3 @@ AI output was reviewed, adapted, and tested as part of the development process. 
 - Run the test command above before submission and add its terminal output or CI link to the submission.
 - Capture final UI screenshots once test accounts/data are populated.
 - Publish the repository and optionally deploy the frontend and API separately.
-
