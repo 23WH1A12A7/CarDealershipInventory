@@ -17,3 +17,15 @@ okay please compelte everyinh now
 The full, unedited kata brief was supplied in the conversation attachment and specifies: a full-stack Car Dealership Inventory System; a REST API with `/api/auth/register`, `/api/auth/login`, vehicle CRUD/search, purchase and restock; token authentication; a persistent database; React, HTML5, CSS3 and Tailwind; TDD; clean code; Git history; AI co-authorship; a README AI-usage section; and this root prompt record.
 
 > Important: Keep appending raw prompts and chat links here during development. Do not replace this file with summaries before submission.
+
+## User request — 2026-08-23
+
+hye it is not running properly giving failed to fetch please cjeck
+
+## User request — 2026-08-23
+
+@[dom-element:form:AuthPanel]
+
+## User request — 2026-08-23
+
+TDD Kata: Car Dealership Inventory System [Full assignment text provided]

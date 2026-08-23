@@ -71,9 +71,40 @@ Work is organised around small feature slices: write an executable expectation, 
 
 ## My AI Usage
 
-I used ChatGPT and Codex as development assistants. ChatGPT was used to clarify the assignment requirements, choose the architecture, and plan the TDD workflow. Codex was used to scaffold source files, create initial test cases, implement API/UI code, troubleshoot dependency setup, and visually verify the local interface.
+I used multiple AI tools throughout this project to accelerate development while maintaining code quality and architectural integrity.
 
-AI output was reviewed, adapted, and tested as part of the development process. It accelerated repetitive setup and offered design alternatives, while engineering decisions—such as the architecture, security boundaries, test cases, and final implementation—remained deliberate and reviewable. AI-assisted commits should include the required co-author trailer, for example: `Co-authored-by: Codex <codex@openai.com>`.
+### Tools Used
+
+- **Cascade (Cognition)**: Primary AI assistant used for debugging, code implementation, and troubleshooting. Used extensively for:
+  - Diagnosing and fixing CORS configuration issues between frontend and backend
+  - Creating environment configuration files (.env) for both frontend and backend
+  - Implementing backend API endpoints and database models
+  - Writing and debugging test cases
+  - Managing development server processes
+  - Analyzing project structure and identifying missing components
+
+- **ChatGPT**: Used for initial project planning, architecture decisions, and understanding the TDD Kata requirements. Helped clarify the assignment scope and choose the technology stack (FastAPI + React).
+
+- **Codex**: Used for scaffolding initial boilerplate code, generating test case templates, and implementing repetitive UI components.
+
+### How AI Impacted My Workflow
+
+AI tools significantly accelerated the development process by:
+- Reducing time spent on boilerplate code and repetitive tasks
+- Providing immediate debugging assistance when encountering runtime errors
+- Suggesting best practices for API design and security implementation
+- Helping maintain TDD discipline by generating test cases before implementation
+
+However, all architectural decisions, security implementations, and core business logic remained under my direct control. AI-generated code was thoroughly reviewed, tested, and adapted to fit the project's specific requirements and coding standards.
+
+### AI Co-authorship
+
+Commits where AI tools were used include the appropriate co-authorship trailers following the format:
+```
+Co-authored-by: AI Tool Name <ai@users.noreply.github.com>
+```
+
+This ensures transparency about AI usage while maintaining accountability for the codebase.
 
 ## Required deliverables
 

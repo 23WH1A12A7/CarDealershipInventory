@@ -10,7 +10,7 @@ from .security import admin_user, create_token, current_user, hash_password, ver
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Apex Motors Inventory API", version="1.0.0")
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://localhost:5174"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 
 @app.get("/health")
