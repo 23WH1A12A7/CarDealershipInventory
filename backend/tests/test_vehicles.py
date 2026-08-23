@@ -50,6 +50,10 @@ def test_purchase_decrements_stock_and_never_goes_negative():
     unavailable = client.post(f"/api/vehicles/{created['id']}/purchase", headers=headers)
     assert unavailable.status_code == 409
 
+    all_orders = client.get("/api/admin/orders", headers=headers)
+    assert all_orders.status_code == 200
+    assert len(all_orders.json()) == 1
+
 
 def test_non_admin_cannot_add_or_restock_vehicle():
     client.post("/api/auth/register", json={"name": "Nina User", "email": "nina@example.com", "password": "UserPass123!"})

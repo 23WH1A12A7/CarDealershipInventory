@@ -42,6 +42,13 @@ class UserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserAdminUpdate(BaseModel):
+    """Fields an administrator may manage for another account."""
+    name: str | None = Field(default=None, min_length=2, max_length=120)
+    role: str | None = Field(default=None, pattern="^(user|admin)$")
+    email_verified: bool | None = None
+
+
 class AuthResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

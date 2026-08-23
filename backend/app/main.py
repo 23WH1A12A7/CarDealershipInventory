@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
 from .models import Purchase, User, Vehicle
-from .schemas import (AuthResponse, OrderUpdate, PaymentIntent, PurchaseRead, PurchaseRequest, RegisterResponse, RestockRequest, 
-                      UserLogin, UserProfileUpdate, UserRead, UserRegister, VehicleCreate, VehicleList, VehicleRead, VehicleUpdate)
+from .schemas import (AuthResponse, OrderUpdate, PaymentIntent, PurchaseRead, PurchaseRequest, RegisterResponse, RestockRequest,
+                      UserAdminUpdate, UserLogin, UserProfileUpdate, UserRead, UserRegister, VehicleCreate, VehicleList, VehicleRead, VehicleUpdate)
 from .security import admin_user, create_token, current_user, hash_password, verify_password
 
 Base.metadata.create_all(bind=engine)
@@ -117,6 +117,37 @@ def update_user_profile(data: UserProfileUpdate, user: User = Depends(current_us
     return user
 
 
+# Administrator user management
+@app.get("/api/admin/users", response_model=list[UserRead])
+def list_users(_: User = Depends(admin_user), db: Session = Depends(get_db)):
+    return db.query(User).order_by(User.created_at.desc()).all()
+
+
+@app.put("/api/admin/users/{user_id}", response_model=UserRead)
+def update_user(user_id: int, data: UserAdminUpdate, admin: User = Depends(admin_user), db: Session = Depends(get_db)):
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    # Do not let an administrator accidentally remove their own access.
+    if user.id == admin.id and data.role and data.role != "admin":
+        raise HTTPException(status_code=400, detail="You cannot remove your own administrator access")
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(user, field, value)
+    db.commit(); db.refresh(user)
+    return user
+
+
+@app.delete("/api/admin/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(user_id: int, admin: User = Depends(admin_user), db: Session = Depends(get_db)):
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.id == admin.id:
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+    db.delete(user)
+    db.commit()
+
+
 # Payment Processing (Mock Stripe Integration)
 @app.post("/api/payments/create-intent")
 def create_payment_intent(data: PaymentIntent, user: User = Depends(current_user)):
@@ -145,6 +176,12 @@ def confirm_payment(payment_id: str, _: User = Depends(current_user)):
 def get_user_orders(user: User = Depends(current_user), db: Session = Depends(get_db)):
     orders = db.query(Purchase).filter(Purchase.user_id == user.id).order_by(Purchase.purchased_at.desc()).all()
     return orders
+
+
+@app.get("/api/admin/orders", response_model=list[PurchaseRead])
+def get_all_orders(_: User = Depends(admin_user), db: Session = Depends(get_db)):
+    """Dealership-wide order queue, available only to administrators."""
+    return db.query(Purchase).order_by(Purchase.purchased_at.desc()).all()
 
 
 @app.get("/api/orders/{order_id}", response_model=PurchaseRead)

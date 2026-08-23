@@ -44,6 +44,8 @@ python -m app.bootstrap_admin
 
 Public registration always creates a standard user. This avoids a user elevating their own access in production.
 
+Use those administrator credentials from the new **Administrator sign in** link on the login screen. The administrator dashboard can add, edit, restock, and delete vehicles, and its **Users** tab can manage customer roles, verification status, and accounts. Inventory changes are stored in the shared database, so they appear for customer accounts on their next inventory request.
+
 ### Frontend
 
 ```powershell
