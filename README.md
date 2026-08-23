@@ -49,12 +49,37 @@ Public registration always creates a standard user. This avoids a user elevating
 ```powershell
 cd frontend
 npm install
+Copy-Item .env.example .env
 npm run dev
 ```
 
-Visit `http://localhost:5173`.
+Visit `http://localhost:5173` (or the port shown in terminal).
 
 For PostgreSQL, start the provided local container with `docker compose up -d`, then set `DATABASE_URL` to `postgresql+psycopg://apex:change-me-before-deploying@localhost:5432/apex_motors`. The required driver and Alembic migration tooling are included in `requirements.txt`. Run `alembic upgrade head` from `backend` before production startup.
+
+## Deployment
+
+### Frontend (Vercel)
+
+The frontend is configured for Vercel deployment. To deploy:
+
+1. Push your repository to GitHub
+2. Import the project in Vercel
+3. Set the `VITE_API_URL` environment variable to your deployed backend URL
+4. Deploy
+
+### Backend (Vercel)
+
+The backend includes a `vercel.json` configuration for deployment. To deploy:
+
+1. Push your repository to GitHub
+2. Import the backend directory as a separate Vercel project
+3. Set environment variables:
+   - `DATABASE_URL`: PostgreSQL connection string (recommended for production)
+   - `JWT_SECRET`: Secure random string for token signing
+4. Deploy
+
+Note: For production, use PostgreSQL instead of SQLite for better performance and reliability.
 
 ## Test report
 
